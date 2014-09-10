@@ -1,4 +1,4 @@
-function editImage
+function GUI_imageEditor
 
 
 % ========================
@@ -160,9 +160,9 @@ set( obj.pb(4:6) , 'callback' , {@recolorImage} )
         
         if obj.grey , tmp = repmat( mean(blurred,3) , [1,1,3] )  ;  end
        
-        tmp(:,:,1) = max( tmp(:,:,1) , min(1,tmp(:,:,1)*1.05*obj.red  ) ) ;
-        tmp(:,:,2) = max( tmp(:,:,2) , min(1,tmp(:,:,2)*1.05*obj.green) ) ;
-        tmp(:,:,3) = max( tmp(:,:,3) , min(1,tmp(:,:,3)*1.05*obj.blue ) ) ;
+        tmp(:,:,1) = max( tmp(:,:,1) , min(1,tmp(:,:,1)*1.05^obj.red  ) ) ;
+        tmp(:,:,2) = max( tmp(:,:,2) , min(1,tmp(:,:,2)*1.05^obj.green) ) ;
+        tmp(:,:,3) = max( tmp(:,:,3) , min(1,tmp(:,:,3)*1.05^obj.blue ) ) ;
         
         set( obj.IH , 'cdata' , tmp )
         
