@@ -83,15 +83,13 @@ curFig       =   figure(         'menubar'      ,      'none'       , ...
 
 set(  curFig , 'units' , 'pixels'  )
 
-curPos       =   get( curFig , 'position' ) ;
+begPos       =   get( curFig , 'position' ) ;
 
-tmpLen       =   curPos(3) - .9 * curPos(4) ;
+tmpLen       =   begPos(3) - .9 * begPos(4) ;
 
-axesPos      =   [       0            0      .9*curPos(4) .9*curPos(4) ] ;
-textPos1     =   [       0      .9*curPos(4) .5*curPos(4) .1*curPos(4) ] ;
-textPos2     =   [ .5*curPos(4) .9*curPos(4) .4*curPos(4) .1*curPos(4) ] ;
-panPos       =   [ .9*curPos(4)       0         tmpLen       curPos(4) ] ;
-curPos       =   [       0            0      .9*curPos(4)    curPos(4) ] ;   
+axesPos      =   [       0            0      .9*begPos(4) .9*begPos(4) ] ;
+panPos       =   [ .9*begPos(4)       0         tmpLen       begPos(4) ] ;
+boxPos       =   [       0            0      .9*begPos(4)    begPos(4) ] ;   
      
 curAxes      =   axes( 'units' , 'pixels' , 'position' , axesPos )  ;
 
@@ -110,23 +108,34 @@ set( gca , 'xtick' , Inf , 'ytick' , Inf )    % Remove tick marks
 
 mass            =  1 ;                        % Initialize aggregate mass
 
-aggText1     =  uicontrol( ...
-    'style'  , 'text'  , 'Fontsize' ,    20    , ...
-    'parent' ,  curFig , 'units'    , 'pixels' , ...
-    ...
-    'position'         ,  textPos1             , ...
-    'string'           ,  num2str(mass) )  ;
+textStrings  =  {  ...
+    'mass'   ,  num2str(mass)  ,  ...
+    'radius' ,  num2str(aggregateRadius) } ;
 
-aggText2     =  uicontrol( ...
-    'style'  , 'text'  , 'Fontsize' ,    20    , ...
-    'parent' ,  curFig , 'units'    , 'pixels' , ...
-    ...
-    'position'         ,  textPos2             , ...
-    'string'           ,  num2str(aggregateRadius) )  ;
+textLocs     =  {
+    [       0      .90*begPos(4) .5*begPos(4) .04*begPos(4) ] , ...
+    [       0      .94*begPos(4) .5*begPos(4) .06*begPos(4) ] , ...
+    [ .5*begPos(4) .90*begPos(4) .4*begPos(4) .04*begPos(4) ] , ...
+    [ .5*begPos(4) .94*begPos(4) .4*begPos(4) .06*begPos(4) ] }  ;    
+    
+aggText  =  zeros( 1 , 4 ) ;
+
+for i = 1 : 4
+    aggText(i) = uicontrol ;
+    set( aggText(i) , 'string'   , textStrings{i} ) ;
+    set( aggText(i) , 'position' , textLocs{i}    ) ;
+end
+
+set(  aggText   ,  ...
+    'style'     , 'text'       , ...
+    'parent'    ,  curFig      , ...
+    'FontUnits' , 'normalized' , ...
+    'Fontsize'  ,  1           , ...
+    'units'     , 'pixels'     )  ;
 
 plot(  x0 , y0 , seedColor  )                 % Plot the seed
          
-flipBook        =  getframe( gcf , curPos )   ;     % Get initial frame
+flipBook        =  getframe( gcf , boxPos )   ;     % Get initial frame
 
 
 %%  Main Program Section
@@ -226,7 +235,7 @@ while particle <= maxParticle
                 
                 axis([ x0-rr  x0+rr y0-rr y0+rr ] )
                 
-                testFrame = getframe( gcf , curPos ) ; % test frame for correct dims
+                testFrame = getframe( gcf , boxPos ) ; % test frame for correct dims
                 
             end
             
@@ -234,10 +243,10 @@ while particle <= maxParticle
             %  Wrap-Up "Stuck" Particle
             % --------------------------
             
-            set( aggText1 , 'string' , num2str(mass) )
-            set( aggText2 , 'string' , num2str(aggregateRadius) )
+            set( aggText(2) , 'string' , num2str(mass) )
+            set( aggText(4) , 'string' , num2str(aggregateRadius) )
             
-            flipBook(end+1) = getframe( curFig , curPos ) ; % Capture Frame
+            flipBook(end+1) = getframe( curFig , boxPos ) ; % Capture Frame
             
             break; %  Break Out of Movement Loop and Start a New History
             
