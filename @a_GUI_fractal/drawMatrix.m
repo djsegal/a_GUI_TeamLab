@@ -1,14 +1,18 @@
 
-function drawMatrix( varargin )
+function drawMatrix( obj )
 
-L        =  10  ;
+N        =  2 * obj.radX + 1 ;
+M        =  2 * obj.radY + 1 ;
 
-N        =  L   ;
-M        =  L*2   ;
+if isempty( obj.seedMatrix ) 
+   
+    obj.seedMatrix = zeros( N , M )  ;
+    
+end
 
 figPos   =  [ .5 .2 .4 .6 ]  ;
 
-curMat   =  zeros( N , M )  ;
+tmpMat   =  obj.seedMatrix   ; 
 
 clickOn  =  false  ;
 
@@ -16,32 +20,38 @@ curVal   =  0      ;
 
 dotSize  =  0      ;
 
-curFig   =       figure(          'windowstyle'  ,     'modal'    , ...
+tmpFig   =       figure(          'windowstyle'  ,     'modal'    , ...
     'units'  ,  'normalized'   ,  'position'     ,     figPos     , ...
     'name'   ,  'drawMatrix'   ,  'numbertitle'  ,      'off'     )  ;
 
-curAx    =       axes(             ...
-    'units'  ,  'normalized'   ,  'parent'       ,     curFig     , ...
+tmpAx    =       axes(             ...
+    'units'  ,  'normalized'   ,  'parent'       ,     tmpFig     , ...
     'xtick'  ,   [ ]           ,  'ytick'        ,    [      ]    )  ;
 
 done     =       uicontrol(        ...
-    'callback'  , @drawDone    ,  'string'       ,     'done'     )  ;
+    'callback'  , @drawDone    ,  'string'       ,    'done'      )  ;
+
+restart  =       uicontrol(        ...
+    'callback'  , @drawClear   ,  'string'       ,    'clear'     )  ;    
 
 cancel   =       uicontrol(        ...
     'callback'  , @drawCancel  ,  'string'       ,    'cancel'    )  ;
 
-set(     [ done , cancel ]     ,   ...
-    'units'     , 'normalized' ,  'parent'       ,     curFig     , ...
+curButtons  =  [ done , cancel , restart ]  ;
+
+set(               curButtons  ,    ...
+    'units'     , 'normalized' ,  'parent'       ,     tmpFig     , ...
     'fontUnits' , 'normalized' ,  'style'        ,   'pushButton' )  ;
 
 hold all
 
 resize
 
-set( curFig , 'WindowButtonDownFcn'   , {@(src,event)begClick} ) ;
-set( curFig , 'WindowButtonMotionFcn' , {@(src,event)midClick} ) ;
-set( curFig , 'WindowButtonUpFcn'     , {@(src,event)endClick} ) ;
-set( curFig , 'resizefcn'             , {@(src,event)resize  } ) ;
+set( tmpFig , 'WindowButtonDownFcn'   , @begClick ) ;
+set( tmpFig , 'WindowButtonMotionFcn' , @midClick ) ;
+set( tmpFig , 'WindowButtonUpFcn'     , @endClick ) ;
+set( tmpFig , 'resizefcn'             , @resize   ) ;
+
 
     % ===============
     %  sub-functions
@@ -82,35 +92,23 @@ set( curFig , 'resizefcn'             , {@(src,event)resize  } ) ;
     end
 
 
-    function drawDone(varargin)
-        
-        close( curFig )
-        
-    end
-
-
-    function drawCancel(varargin)
-        
-        close( curFig )
-        
-    end
-
-
     function resize(varargin)
         
-        set( curAx , 'units'     , 'normalized' )
+        set( tmpAx   , 'units'     , 'normalized' )
         
-        set( curAx , 'position'  , [ 0 .1 1 .9 ]  )
+        set( tmpAx   , 'position'  , [ 0 .1 1 .9 ]  )
         
-        set( curAx , 'units'     ,   'inches'   )
+        set( tmpAx   , 'units'     ,   'inches'   )
+                 
+        set( done    , 'position'  , [ 0/3 0 1/3 .1 ]  )
+
+        set( restart , 'position'  , [ 1/3 0 1/3 .1 ]  )
         
-        set( done  , 'position'  , [ 0 0 .5 .1 ]  )
+        set( cancel  , 'position'  , [ 2/3 0 1/3 .1 ]  )
+         
+        set( curButtons ,  'fontsize' , .6 ) ;
         
-        set( cancel , 'position' , [ .5 0 .5 .1 ] )
-        
-        set( [ done , cancel ]    ,  'fontsize' , .6 ) ;
-        
-        tmpVector  =  get( curAx ,  'position'  ) ;
+        tmpVector  =  get( tmpAx ,  'position'  ) ;
         
         dotSize    =  min( tmpVector(3:4) ) ;
         
@@ -123,7 +121,7 @@ set( curFig , 'resizefcn'             , {@(src,event)resize  } ) ;
 
     function remake
         
-        cla( curAx )
+        cla( tmpAx )
         
         for     i = 1 : N  ,  plot( [ i i ] , [ 0 M ] , 'k' )  ,  end
         for     j = 1 : M  ,  plot( [ 0 N ] , [ j j ] , 'k' )  ,  end
@@ -131,7 +129,7 @@ set( curFig , 'resizefcn'             , {@(src,event)resize  } ) ;
         for     i = 1 : N
             for j = 1 : M
                 
-                if curMat(i,j) == 1
+                if tmpMat(i,j) == 1
                     
                     addPoint( [ i j ] , 1 )
                     
@@ -143,9 +141,36 @@ set( curFig , 'resizefcn'             , {@(src,event)resize  } ) ;
     end
 
 
+    function drawDone(varargin)
+        
+        obj.seedMatrix  =  tmpMat  ;
+        
+        plantSeed(obj)
+        
+        close( tmpFig )
+        
+    end
+
+
+    function drawClear(varargin)
+       
+        tmpMat  =  zeros( size(tmpMat,1) , size(tmpMat,2) )  ; 
+        
+        remake
+        
+    end
+
+
+    function drawCancel(varargin)
+        
+        close( tmpFig )
+        
+    end
+
+
     function [ curPos , newVal ] = getPosition
         
-        curPt  = get( curAx , 'currentpoint' ) ;
+        curPt  = get( tmpAx , 'currentpoint' ) ;
         
         curPos = floor( curPt(1,1:2) + 1 ) ;
         
@@ -154,14 +179,14 @@ set( curFig , 'resizefcn'             , {@(src,event)resize  } ) ;
         if  curPos(1) < 1 || curPos(1) > N  ,  return  ,  end
         if  curPos(2) < 1 || curPos(2) > M  ,  return  ,  end
         
-        newVal = mod( 1 + curMat(curPos(1),curPos(2)) , 2 ) ;
+        newVal = mod( 1 + tmpMat(curPos(1),curPos(2)) , 2 ) ;
         
     end
 
 
     function addPoint( curPos , newVal )
         
-        curMat( curPos(1) , curPos(2) ) = newVal ;
+        tmpMat( curPos(1) , curPos(2) ) = newVal ;
         
         switch newVal
             
