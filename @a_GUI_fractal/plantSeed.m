@@ -8,25 +8,14 @@ function plantSeed(obj)
 scrapFractal( obj )
 
 
-% ===============================================
-%  add a one-pixel seed if one hasn't been given
-% ===============================================
+% ===========================
+%   if seedMatrix is empty, 
+%  add a point at the center
+% ===========================
 
-if isempty( obj.seedMatrix )
+if ~any( obj.seedMatrix )
     
-    obj.mass             =  1 + obj.mass             ;
-    obj.aggregateRadius  =  1 + obj.aggregateRadius  ;
-    
-    obj.Grid(obj.x0,obj.y0)   = 1  ;          % Place seed at origin
-    
-    plot( obj.curAxes , obj.x0 , obj.y0 , obj.seedColor ) % Plot the seed
-    
-    set( obj.aggText(2) , 'string' , num2str(obj.mass) )
-    set( obj.aggText(4) , 'string' , num2str(obj.aggregateRadius) )
-    
-    axis( obj.curAxes , [ obj.x0-6  obj.x0+6 obj.y0-6 obj.y0+6 ] )
-    
-    return
+    obj.seedMatrix( obj.radX+1 , obj.radY+1 )  = 1 ;
     
 end
 
@@ -35,9 +24,7 @@ end
 %  add seed defined by the seedMatrix
 % ====================================
 
-obj.Grid( obj.x0 , obj.x0 ) = 0 ;
-
-aggRadSquared  =  1 ;
+obj.seedList = zeros(0,2) ;
 
 for     i = 1 : 2*obj.radX + 1
     for j = 1 : 2*obj.radY + 1
@@ -49,37 +36,21 @@ for     i = 1 : 2*obj.radX + 1
             curX = ( obj.x0 + i ) - ( obj.radX + 1 ) ;
             curY = ( obj.y0 + j ) - ( obj.radY + 1 ) ;
             
-            plot( obj.curAxes , curX , curY , obj.seedColor  ) ;
-            obj.Grid( curX , curY )  =  1   ;
-            
-            radiusSquared  =  ( curX - obj.x0 )^2 + ( curY - obj.y0 )^2  ;
-            
-            aggRadSquared  =  max( aggRadSquared , radiusSquared ) ;
+            obj.seedList(end+1,:) = [  curX  curY  ]  ;
                         
         end
         
     end
 end
 
-
-% ==========================
-%  resize axis to show seed
-% ==========================
-
-obj.aggregateRadius  =  ceil( sqrt( aggRadSquared ) ) ;
-
-rr                   =  1.25  *  min( 5 , obj.aggregateRadius ) ;
-
-axis( obj.curAxes , [ obj.x0-rr  obj.x0+rr obj.y0-rr obj.y0+rr ] )
+plotPoints( obj , obj.seedList , obj.seedColor )
 
 
-% ===================
-%  update text boxes
-% ===================
+% ===============
+%  restart movie
+% ===============
 
-set( obj.aggText(2) , 'string' , num2str(obj.mass            ) )
-set( obj.aggText(4) , 'string' , num2str(obj.aggregateRadius ) )
-
+obj.flipBook  =  getframe( obj.curFig , obj.boxPos )   ; % Get initial frame
 
 end
 

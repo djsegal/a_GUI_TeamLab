@@ -1,5 +1,5 @@
 
-function changeFile(obj)
+function changeName(obj)
 
 [fname,pathstr,~] = uiputfile('.avi','Change Video File',obj.movieName) ;
 

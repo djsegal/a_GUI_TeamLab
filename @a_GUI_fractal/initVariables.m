@@ -22,7 +22,15 @@ obj.diffAccelRadius         =  obj.diffusionRadius - obj.startRadius ;
 %  Grid Matrix
 % -------------
 
-obj.x0    =  obj.gridSize + 1  ;          % Define origin using offset coordinates
-obj.y0    =  obj.gridSize + 1  ;
+obj.x0   =   obj.gridSize + 1  ;  % Define origin using offset coordinates
+obj.y0   =   obj.gridSize + 1  ;
+
+% ---------------
+%  Fractal Lists
+% ---------------
+
+obj.seedMatrix  =  zeros( 2*obj.radX+1 , 2*obj.radY+1 ) ;
+
+obj.pointList   =  zeros( obj.maxParticle , 2 ) ; 
 
 end

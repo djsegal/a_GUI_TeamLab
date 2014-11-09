@@ -1,5 +1,5 @@
 
-function drawMatrix( obj )
+function drawSeed( obj )
 
 N        =  2 * obj.radX + 1 ;
 M        =  2 * obj.radY + 1 ;
@@ -14,6 +14,13 @@ figPos   =  [ .5 .2 .4 .6 ]  ;
 
 tmpMat   =  obj.seedMatrix   ; 
 
+if  tmpMat( obj.radX+1 , obj.radY+1 ) && ...
+    sum( sum(tmpMat) ) == 1 
+
+    tmpMat( obj.radX+1 , obj.radY+1 ) =  0 ;
+    
+end
+
 clickOn  =  false  ;
 
 curVal   =  0      ;
@@ -22,7 +29,7 @@ dotSize  =  0      ;
 
 tmpFig   =       figure(          'windowstyle'  ,     'modal'    , ...
     'units'  ,  'normalized'   ,  'position'     ,     figPos     , ...
-    'name'   ,  'drawMatrix'   ,  'numbertitle'  ,      'off'     )  ;
+    'name'   ,  'drawSeed'     ,  'numbertitle'  ,      'off'     )  ;
 
 tmpAx    =       axes(             ...
     'units'  ,  'normalized'   ,  'parent'       ,     tmpFig     , ...

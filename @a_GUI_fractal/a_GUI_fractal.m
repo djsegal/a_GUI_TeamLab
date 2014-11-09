@@ -7,47 +7,54 @@
 classdef a_GUI_fractal < handle
     
     properties
+       
+        % ======================
+        %  Tweakable Parameters 
+        % ======================
+       
+        gridSize        % Grid size to put particles
+        maxParticle     % Number of particles to be used
         
-        % ----------------------
-        %  Tweakable Parameters
-        % ----------------------
-              
-        mass             =    1 ;     % Initially one seed at center
-        aggregateRadius  =    0 ;     % Radius of aggregate
+        startRadius     % Radius of start circle
         
-        gridSize         =  5e3 ;     % Grid size to put particles
-        maxParticle      =  5e9 ;     % Number of particles to be used
+        killFactor      % Radius to kill particles
+        diffFactor      % Radius to use diffusion accelerator
         
-        startRadius      =  1e2 ;     % Radius of start circle
+        seedColor       % Seed color is initially red
+        dotsColor       % Dots color is initially blue
+        dotsShape       % Dots shape is initially a dot
         
-        killFactor       =  1.1 ;     % Radius to kill particles
-        diffFactor       =  2.0 ;     % Radius to use diffusion accelerator
+        movieLength     % Movie set to last 10 seconds
+        movieName       
         
-        videoNum         =    0 ;     % Index  of current fractal video
+        radX            % Height  =  1 + 2 * radX
+        radY            % Width   =  1 + 2 * radY
         
-        seedColor        =  'r' ;     % Seed color is initially red
-        dotsColor        =  'b' ;     % Dots color is initially blue
-        dotsShape        =  '.' ;     % Dots shape is initially a dot
-        
-        boxPos
+    end
+    
+    properties
         
         seedMatrix       =   [] ;     % Matrix that holds seed shape
         
-        movieLength      =   10 ;     % Movie set to last 10 seconds
-        movieName        =  'Fractal_0.avi' ;
+        mass
+        aggregateRadius
         
-        radX             =    1 ;     % Height  =  1 + 2 * radX
-        radY             =    2 ;     % Width   =  1 + 2 * radY
-        
-        numParts         =    1 ;
+        numParts         =    0 ;
         
         curFig
         curAxes
         curPanel
         
+        seedList
+        pointList
+        
     end
     
     properties( Hidden )
+        
+        boxPos
+        
+        curMarkerSize
         
         diffusionRadius
         diffusionRadiusSquared
@@ -61,13 +68,11 @@ classdef a_GUI_fractal < handle
         y0
         Grid
         
-        aggText  =  zeros( 1 , 4 ) ;
+        aggText  =  zeros( 1 , 4 )
         
         flipBook
         
         curButtons
-        
-        fractalGrowing = false ;
         
     end
     
@@ -75,19 +80,18 @@ classdef a_GUI_fractal < handle
         
         function obj = a_GUI_fractal
             
-            set(0,'DefaultLineMarkerSize',40);
+            set(           0             ,      ...
+                'DefaultLineMarkerSize'  ,  40  ) ;
+                        
+            buildLayout(    obj  )
             
-            initVariables( obj )
+            createText(     obj  )
             
-            buildLayout( obj )
+            alterSettings(    obj  ,  true  )
+                        
+            addButtons(     obj  )
             
-            createText( obj )
-            
-            addButtons( obj )
-            
-            plantSeed( obj )
-            
-            obj.flipBook  =  getframe( obj.curFig , obj.boxPos )   ; % Get initial frame
+            plantSeed(      obj  )
             
         end
         
@@ -95,27 +99,31 @@ classdef a_GUI_fractal < handle
     
     methods( Hidden )
         
-        initVariables(obj)
+        addButtons(       obj  )
         
-        buildLayout(obj)
+        alterSettings(    obj  ,  isFirstCall  )
         
-        createText(obj)
+        buildLayout(      obj  )
         
-        addButtons(obj)
+        changeName(       obj  )
         
-        growFractal(obj)
+        createText(       obj  )
         
-        makeMovie(obj)
+        drawSeed(         obj  )
         
-        changeFile(obj)
+        growFractal(      obj  )
         
-        plantSeed(obj)
+        initVariables(    obj  )
         
-        drawMatrix(obj)
+        makeMovie(        obj  )
         
-        scrapFractal(obj)
+        plantSeed(        obj  )
         
-        saveLoadFractal(obj)
+        plotPoints(       obj  ,   varargin  )
+        
+        saveLoadFractal(  obj  )
+        
+        scrapFractal(     obj  )
         
     end
     

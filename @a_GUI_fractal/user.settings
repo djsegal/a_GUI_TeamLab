@@ -1,0 +1,12 @@
+gridSize,5e3
+maxParticle,5e2
+startRadius,1e2
+killFactor,1.2
+diffFactor,1.1
+seedColor,b
+dotsColor,b
+dotsShape,.
+movieName,Fractal_0.avi
+movieLength,10
+radX,1
+radY,2
