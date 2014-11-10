@@ -36,6 +36,9 @@ classdef a_GUI_fractal < handle
         
         seedMatrix       =   [] ;     % Matrix that holds seed shape
         
+        seedMass
+        dotsMass
+
         mass
         aggregateRadius
         

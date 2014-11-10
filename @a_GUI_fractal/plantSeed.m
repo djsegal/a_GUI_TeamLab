@@ -31,7 +31,7 @@ for     i = 1 : 2*obj.radX + 1
         
         if obj.seedMatrix(i,j) == 1
             
-            obj.mass  =  obj.mass + 1  ;
+            obj.seedMass  =  obj.seedMass + 1  ;
             
             curX = ( obj.x0 + i ) - ( obj.radX + 1 ) ;
             curY = ( obj.y0 + j ) - ( obj.radY + 1 ) ;

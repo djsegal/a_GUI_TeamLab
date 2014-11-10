@@ -9,9 +9,9 @@ newString = strrep( curString , 'Load' , 'Save' ) ;
 
 set( obj.curButtons(1) , 'string' , newString ) ;
 
-% --------------------
+% ====================
 %  History While Loop
-% --------------------
+% ====================
 
 if  obj.maxParticle < obj.numParts
    
@@ -21,9 +21,10 @@ end
 
 while obj.numParts <= obj.maxParticle
     
-    % ------------------------
+    
+    % ========================
     %  Start Current Particle
-    % ------------------------
+    % ========================
     
     particle_alive  =  true ;         % Set logical variable for movement loop
     
@@ -34,16 +35,17 @@ while obj.numParts <= obj.maxParticle
     rx            =  obj.x0 + round( obj.startRadius * cos(phi) ) ;
     ry            =  obj.y0 + round( obj.startRadius * sin(phi) ) ;
     
-    % ---------------------
+    
+    % =====================
     %  Movement While Loop
-    % ---------------------
+    % =====================
     
     while particle_alive
         
         
-        % -----------------
+        % =================
         %  Update Position
-        % -----------------
+        % =================
         
         radiusSquared  =  ( rx - obj.x0 )^2 + ( ry - obj.y0 )^2  ;
         
@@ -51,10 +53,10 @@ while obj.numParts <= obj.maxParticle
             
             switch( randi(4) )
                 
-                case 1  ,  rx = rx + 1  ; % right
-                case 2  ,  rx = rx - 1  ; % left
-                case 3  ,  ry = ry + 1  ; % up
-                case 4  ,  ry = ry - 1  ; % down
+                case 1  ,  rx = rx + 1  ;   %    right
+                case 2  ,  rx = rx - 1  ;   %    left
+                case 3  ,  ry = ry + 1  ;   %    up
+                case 4  ,  ry = ry - 1  ;   %    down
                     
             end
             
@@ -73,9 +75,9 @@ while obj.numParts <= obj.maxParticle
         radiusSquared  =  ( rx - obj.x0 )^2 + ( ry - obj.y0 )^2  ;
         
         
-        % -------------------------
+        % =========================
         %  Kill Particle if Needed
-        % -------------------------
+        % =========================
         
         if  radiusSquared >= obj.killRadiusSquared ...
                 ||   obj.Grid( rx , ry ) == 1
@@ -87,47 +89,60 @@ while obj.numParts <= obj.maxParticle
         end
         
         
-        % ----------------------------
-        %  Stick a Partcle to Fractal
-        % ----------------------------
+        % =======================
+        %  Move to Next Particle
+        %   if it's not a Stick
+        % =======================
+   
+        if ...                              
+                obj.Grid( rx + 1 , ry     )   +  ...
+                obj.Grid( rx - 1 , ry     )   +  ...
+                obj.Grid( rx     , ry + 1 )   +  ...
+                obj.Grid( rx     , ry - 1 )  ==   0
         
-        if ...                              %   " Stick "
-                obj.Grid( rx + 1 , ry     ) + ...
-                obj.Grid( rx - 1 , ry     ) + ...
-                obj.Grid( rx     , ry + 1 ) + ...
-                obj.Grid( rx     , ry - 1 ) >  0
-            
-            pause(1e-3)
-            
-            if ~get(obj.curButtons(end),'value')  ,  return  ,  end
-            
-            obj.mass  =  obj.mass + 1       ;       % Increment obj.mass
-            
-            curPart   =  obj.mass - size(obj.seedList,1) ;
-            
-            obj.pointList( curPart , : ) = [ rx , ry ] ;
-            
-            plotPoints(                        ...
-                obj                          , ...
-                obj.pointList( curPart , : ) , ...
-                obj.dotsColor )
-            
-            obj.flipBook(end+1) = getframe( obj.curFig , obj.boxPos ) ; % Capture Frame
-            
-            particle_alive  =  false ;
-            
-            continue
+            continue 
             
         end
+        
+        
+        % ====================
+        %   Quit Function If 
+        %  Paused by the User
+        % ====================
+        
+        pause(eps)
+        
+        if ~get(obj.curButtons(end),'value')  ,  return  ,  end
+        
+        
+        % ==========================
+        %  Stick Partcle to Fractal
+        % ==========================
+        
+        obj.dotsMass  =  obj.dotsMass + 1 ;
+        
+        obj.pointList( obj.dotsMass , : ) = [ rx , ry ] ;
+        
+        plotPoints( obj , [ rx , ry ] , obj.dotsColor )
+        
+        obj.flipBook(end+1) = getframe( obj.curFig , obj.boxPos ) ; % Capture Frame
+        
+        particle_alive  =  false ;
         
     end
     
 end
+
+
+% ================
+%  finish fractal
+% ================
 
 makeMovie(obj)
 
 set( obj.curButtons(end) , 'value' , 0 )
 
 fprintf( ' \n done \n \n ' )
+
 
 end

@@ -9,7 +9,9 @@ cla( obj.curAxes )
 
 obj.Grid  =  zeros(2*obj.gridSize + 1) ;  % Define grid to store stuck particles
 
-obj.mass             =  0   ;
+obj.seedMass         =  0   ;
+obj.dotsMass         =  0   ;
+
 obj.aggregateRadius  =  0   ;
 obj.numParts         =  0   ;
 

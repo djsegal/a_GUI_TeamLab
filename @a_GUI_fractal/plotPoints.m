@@ -2,17 +2,15 @@ function plotPoints( obj , curPoints , curColor )
 
 if isempty(curPoints)
     
-    curPart   =  obj.mass - size(obj.seedList,1) ;
-    
     cla
     
     plotPoints( obj , obj.seedList , obj.seedColor )
     
-    if curPart < 1 , return , end
+    if obj.dotsMass == 0 , return , end
     
     plotPoints(                        ...
         obj                          , ...
-        obj.pointList( 1:curPart , : ) , ...
+        obj.pointList( 1:obj.dotsMass , : ) , ...
         obj.dotsColor )
     
     return
@@ -48,17 +46,15 @@ if obj.aggregateRadius == 0 || maxRad > obj.aggregateRadius
         
         if maxRad >  0
         
-            curPart   =  obj.mass - size(obj.seedList,1) ;
-            
             cla
         
             plotPoints( obj , obj.seedList , obj.seedColor )
             
-            if curPart < 1 , return , end
+            if obj.dotsMass == 0 , return , end
             
             plotPoints(                        ...
                 obj                          , ...
-                obj.pointList( 1:curPart , : ) , ...
+                obj.pointList( 1:obj.dotsMass , : ) , ...
                 obj.dotsColor )
             
         end
@@ -85,8 +81,8 @@ end
 %  update text boxes
 % ===================
 
-set( obj.aggText(2) , 'string' , num2str(obj.mass           ) )
-set( obj.aggText(4) , 'string' , num2str(obj.aggregateRadius) )
+set(  obj.aggText(2)  ,  'string'  ,  num2str( obj.seedMass + obj.dotsMass )  )
+set(  obj.aggText(4)  ,  'string'  ,  num2str(     obj.aggregateRadius     )  )
 
 % ==================
 %  redo axes bounds
