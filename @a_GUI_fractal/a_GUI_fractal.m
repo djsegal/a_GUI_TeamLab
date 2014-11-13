@@ -6,6 +6,7 @@
 
 classdef a_GUI_fractal < handle
     
+    
     properties
        
         % ======================
@@ -30,9 +31,16 @@ classdef a_GUI_fractal < handle
         radX            % Height  =  1 + 2 * radX
         radY            % Width   =  1 + 2 * radY
         
+        
     end
     
+    
     properties
+        
+        % ======================
+        %  Parameters Important
+        %      to the User
+        % ======================
         
         seedMatrix       =   [] ;     % Matrix that holds seed shape
         
@@ -51,9 +59,14 @@ classdef a_GUI_fractal < handle
         seedList
         pointList
         
+        
     end
     
     properties( Hidden )
+        
+        % ==================
+        %  Hidden Variables
+        % ==================
         
         boxPos
         
@@ -77,15 +90,18 @@ classdef a_GUI_fractal < handle
         
         curButtons
         
+        
     end
+    
     
     methods
         
+        % ====================
+        %  Constructor Method
+        % ====================
+        
         function obj = a_GUI_fractal
             
-            set(           0             ,      ...
-                'DefaultLineMarkerSize'  ,  40  ) ;
-                        
             buildLayout(    obj  )
             
             createText(     obj  )
@@ -98,23 +114,43 @@ classdef a_GUI_fractal < handle
             
         end
         
+        
     end
     
+    
     methods( Hidden )
-        
-        addButtons(       obj  )
+       
+        % ==================
+        %  Button Functions
+        % ==================
         
         alterSettings(    obj  ,  isFirstCall  )
         
-        buildLayout(      obj  )
-        
         changeName(       obj  )
-        
-        createText(       obj  )
         
         drawSeed(         obj  )
         
         growFractal(      obj  )
+        
+        saveLoadFractal(  obj  )
+        
+        scrapFractal(     obj  )
+        
+        
+    end
+    
+    
+    methods( Hidden )
+        
+        % =================
+        %  Other Functions
+        % =================
+        
+        addButtons(       obj  )
+        
+        buildLayout(      obj  )
+        
+        createText(       obj  )
         
         initVariables(    obj  )
         
@@ -124,10 +160,8 @@ classdef a_GUI_fractal < handle
         
         plotPoints(       obj  ,   varargin  )
         
-        saveLoadFractal(  obj  )
-        
-        scrapFractal(     obj  )
         
     end
+    
     
 end
